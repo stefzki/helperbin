@@ -6,6 +6,10 @@
 ## TODO: licence, autodetect md5, add tempdir for performance increase
 ########################################################
 
+SAVEIFS=$IFS
+IFS=$(echo -en "\n\b")
+MD5BIN=/sbin/md5
+
 function printusage() {
 	echo "$0 source_dir compare_dir [mode]"	
 }
@@ -61,10 +65,6 @@ function matchByMD5() {
 	done
 	echo "Analyzed ${FILES} files, found ${MD5MATCHES} matching md5 sums"
 }
-
-SAVEIFS=$IFS
-IFS=$(echo -en "\n\b")
-MD5BIN=/sbin/md5
 
 if [ $# -lt 2 ]
 then
