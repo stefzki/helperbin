@@ -8,7 +8,14 @@
 
 SAVEIFS=$IFS
 IFS=$(echo -en "\n\b")
-MD5BIN=/sbin/md5
+if [ -e /sbin/md5 ]
+then
+    MD5BIN="/sbin/md5"
+    MD5OPTS="-r"
+else
+    MD5BIN="/usr/bin/md5sum"
+    MD5OPTS=""
+fi
 
 function printusage() {
 	echo "$0 source_dir compare_dir [mode]"	
@@ -24,9 +31,11 @@ function matchByNameCheckByMD5() {
 			md5match=0
 			if [ "${source}" != "${candidate}" ]
 			then
-				sourcemd5=`$MD5BIN ${source} | sed -E 's/.*= (.*)/\1/'`
-				targetmd5=`$MD5BIN ${candidate} | sed -E 's/.*= (.*)/\1/'`
-				if [ "${sourcemd5}" == "${targetmd5}" ]
+			    sourcemd5=`${MD5BIN} ${MD5OPTS} ${source}`
+                sourcemd5="${sourcemd5%% *}"
+                candidatemd5=`${MD5BIN} ${MD5OPTS} ${candidate}`
+                candidatemd5="${candidatemd5%% *}"
+				if [ "${sourcemd5}" == "${candidatemd5}" ]
 				then
 					md5match=1				
 				fi
@@ -53,9 +62,11 @@ function matchByMD5() {
 			if [ "${source}" != "${candidate}" ]
 			then
 				md5match=0
-				sourcemd5=`$MD5BIN ${source} | sed -E 's/.*= (.*)/\1/'`
-				targetmd5=`$MD5BIN ${candidate} | sed -E 's/.*= (.*)/\1/'`
-				if [ "${sourcemd5}" == "${targetmd5}" ]
+			    sourcemd5=`${MD5BIN} ${MD5OPTS} ${source}`
+                sourcemd5="${sourcemd5%% *}"
+                candidatemd5=`${MD5BIN} ${MD5OPTS} ${candidate}`
+                candidatemd5="${candidatemd5%% *}"
+				if [ "${sourcemd5}" == "${candidatemd5}" ]
 				then
 					echo "Found duplicate files: '${source}' - '${candidate}'"
 					MD5MATCHES=`expr ${MD5MATCHES} + 1`
