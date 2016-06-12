@@ -110,7 +110,7 @@ case ${MODE} in
 	2)
 		matchByMD5;;
 	*)
-		echo "Not a valid mode"
+		echo "Not a valid mode."
 esac
 
 IFS=$SAVEIFS
